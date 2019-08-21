@@ -12,7 +12,17 @@ print(u"\u2588\u2588")
 # To escape sequences
 http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#cursor-navigation
 
-
+# To check for windows - need to test in linux
+>>> import platform
+>>> import sys
+>>> import os
+>>>
+>>> sys.platform
+'win32'
+>>> platform.system()
+'Windows'
+>>> os.name
+'nt'
 
 """
 def main():
