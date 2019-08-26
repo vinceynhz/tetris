@@ -1,16 +1,22 @@
-import pygame
 """
+Tetris game for the terminal using ANSI Escape Sequences.
 
-# To enable colors in windows 10 / this works also for gitbash - need to test in win 8
-import ctypes
-kernel32 = ctypes.windll.kernel32
-kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+Documentation and reference about Escape Sequences used for this game:
 
-# To print a single square
-print(u"\u2588\u2588")
+- http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#cursor-navigation
+- http://courseweb.stthomas.edu/tpsturm/private/notes/qm300/ANSI.html
 
-# To escape sequences
-http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#cursor-navigation
+Documentation of some printable special characters:
+
+- https://www.w3schools.com/charsets/ref_utf_box.asp
+
+"""
+from __future__ import print_function
+
+import sys
+import time
+
+"""
 
 # To check for windows - need to test in linux
 >>> import platform
@@ -24,18 +30,82 @@ http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#curs
 >>> os.name
 'nt'
 
+# To enable colors in windows 10 cmd / this works also for gitbash
+import ctypes
+kernel32 = ctypes.windll.kernel32
+kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+
+# To print a single square
+print(u"\u2588\u2588")
 """
+
+class FG:
+    BLACK = u"\u001b[30m"
+    RED = u"\u001b[31m"
+    GREEN = u"\u001b[32m"
+    YELLOW = u"\u001b[33m"
+    BLUE = u"\u001b[34m"
+    MAGENTA = u"\u001b[35m"
+    CYAN = u"\u001b[36m"
+    WHITE = u"\u001b[37m"
+    RESET = u"\u001b[0m"
+
+class BG:
+    LIGHT = ""    
+
+class Field:
+    def __init__(self):
+        self.dim = [ [ '.' for x in range(10) ] for y in range(20) ]
+
+    def print(self):
+        raw(u"\n \u256d")
+        for i in range(20): # 10 cells * 2 characters for each one
+            raw(u"\u2500")
+        raw(u"\u256e\n")
+        for i in range(20):
+            raw(u" \u2502")
+            for j in range(10):
+                cell = self.dim[i][j]
+                flag = (j + (i % 2)) % 2 == 0
+                if flag: 
+                    raw(u"\u001b[38;5;153m")
+                raw(u"\u2588\u2588")
+                if flag:
+                   raw(u"\u001b[0m")
+            raw(u"\u2502\n")
+        raw(u" \u2570")
+        for i in range(20):
+            raw(u"\u2500")
+        raw(u"\u256f\n")
+
+def clear():
+    """ 
+    Call ANSI sequences
+    CSI 2J      - erase all screen
+    CSI 1;1f    - move cursor to top left
+    """
+    raw(u"\u001b[2J\u001b[1;1f")
+
+def raw(*args):
+    for arg in args:
+        sys.stdout.write(arg)
+    sys.stdout.flush()
+
 def main():
-    pygame.init()
+    # We start by clearing the screen
+    clear()
+    # raw(u"\u001b[48;5;239m\u001b[K");
 
-    pygame.display.set_caption("mintris")
-    screen = pygame.display.set_mode((240, 180))
-    running = True
+    f = Field()
+    f.print()
 
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+    # raw(u"\u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588\n\u001b[48;5;239m\u001b[K\n")
+    
+    # raw(u"\u001b[0m")
+    time.sleep(2)
+    
+    # We clear the screen before we finish
+    clear()
 
 if __name__ == '__main__':
     main()
