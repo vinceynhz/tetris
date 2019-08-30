@@ -17,24 +17,6 @@ import sys
 import time
 
 """
-
-# To check for windows - need to test in linux
->>> import platform
->>> import sys
->>> import os
->>>
->>> sys.platform
-'win32'
->>> platform.system()
-'Windows'
->>> os.name
-'nt'
-
-# To enable colors in windows 10 cmd / this works also for gitbash
-import ctypes
-kernel32 = ctypes.windll.kernel32
-kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
-
 # To print a single square
 print(u"\u2588\u2588")
 """
@@ -92,6 +74,13 @@ def raw(*args):
     sys.stdout.flush()
 
 def main():
+    if 'win' in sys.platform:
+        # To enable colors on the console if we're on windows
+        import ctypes
+        
+        kernel32 = ctypes.windll.kernel32
+        kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+
     # We start by clearing the screen
     clear()
     # raw(u"\u001b[48;5;239m\u001b[K");
