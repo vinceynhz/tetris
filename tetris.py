@@ -40,10 +40,10 @@ class Field:
         self.dim = [ [ '.' for x in range(10) ] for y in range(20) ]
 
     def print(self):
-        raw(u"\n \u256d")
+        raw(u"\n \u250c")
         for i in range(20): # 10 cells * 2 characters for each one
             raw(u"\u2500")
-        raw(u"\u256e\n")
+        raw(u"\u2510\n")
         for i in range(20):
             raw(u" \u2502")
             for j in range(10):
@@ -55,10 +55,10 @@ class Field:
                 if flag:
                    raw(u"\u001b[0m")
             raw(u"\u2502\n")
-        raw(u" \u2570")
+        raw(u" \u2514")
         for i in range(20):
             raw(u"\u2500")
-        raw(u"\u256f\n")
+        raw(u"\u2518\n")
 
 def clear():
     """ 
