@@ -10,6 +10,8 @@ Documentation of some printable special characters:
 
 - https://www.w3schools.com/charsets/ref_utf_box.asp
 
+In python 2.7 we can't have a print method
+
 """
 import sys
 import time
@@ -27,10 +29,12 @@ class Field(object):
         'Z': Color.FG.GREEN,
         'l': Color.FG.CYAN
     }
+
     def __init__(self):
         self.dim = [ [ '.' for x in range(10) ] for y in range(20) ]
 
-    def print(self):
+
+    def _print(self):
         Screen.clear()
 
         # First line of the box
@@ -67,6 +71,7 @@ class Field(object):
         Screen.move(30, 11)
         Screen.raw("Score:")
 
+
 def main():
     if 'win' in sys.platform:
         # To enable colors on the console if we're on windows
@@ -75,11 +80,11 @@ def main():
         kernel32 = ctypes.windll.kernel32
         kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
-    # f = Field()
-    # f.print()
+    f = Field()
+    f._print()
 
-    l = L_Tetromino()
-    l.print()
+    #l = L_Tetromino()
+    #l._print()
     # Screen.raw('\n')
 
     # l.rotate_cw()

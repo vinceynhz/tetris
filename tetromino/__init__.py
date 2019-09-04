@@ -15,7 +15,7 @@ class Tetromino(object):
         self.size = size
         self.matrix = [ ['.' for x in range(size)] for y in range(size) ]
 
-    def print(self):
+    def _print(self):
         Screen.raw(self._color())
         for y in range(self.size):
             for x in range(self.size):
