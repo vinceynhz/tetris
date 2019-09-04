@@ -1,3 +1,5 @@
+import random
+
 from ansi import Screen, Color
 
 class Tetromino(object):
@@ -9,6 +11,20 @@ class Tetromino(object):
     in any of their rotations
     """
     BLOCK = u"\u2588\u2588"
+
+    _constructors = [
+        lambda: L_Tetromino(),
+        lambda: J_Tetromino(),
+        lambda: T_Tetromino(),
+        lambda: O_Tetromino(),
+        lambda: S_Tetromino(),
+        lambda: Z_Tetromino(),
+        lambda: l_Tetromino()
+    ]
+
+    @staticmethod
+    def rand():
+        return Tetromino._constructors[random.randint(0,6)]()
 
     def __init__(self, size=4):
         self.pos = None
@@ -23,7 +39,7 @@ class Tetromino(object):
                     Screen.raw('  ')
                 else:
                     Screen.raw(Tetromino.BLOCK)
-            Screen.raw('\n')
+            Screen.ln(self.size * 2)
         Screen.raw(Color.RESET)
 
     def _color(self):

@@ -14,6 +14,7 @@ In python 2.7 we can't have a print method
 
 """
 import sys
+import threading
 import time
 
 from tetromino import *
@@ -32,43 +33,36 @@ class Field(object):
 
     def __init__(self):
         self.dim = [ [ '.' for x in range(10) ] for y in range(20) ]
+        self.b_board = Box(2, 2, 10, 20)
+        self.b_next = Box(2, 30, 4, 4)
+        
+        self.t_current = None
+        self.t_next = None
 
+    # def draw_blocks(self):
+    #     Screen.position(Field._field.left, Field._field.top)
+    #     for i in range(20):
+    #         for j in range(10):
+    #             cell = self.dim[i][j]
+    #             if cell == '.': 
+    #                 Screen.raw('  ')
+    #             else:
+    #                 Screen.raw(Field._color_mapping[cell], Tetromino.BLOCK)
+    #                 Screen.raw(Color.RESET)
+    #         Screen.raw(Box.V_LINE)
+    #         Screen.ln(20)
 
-    def _print(self):
+    def start(self):
+        # draw the main board
         Screen.clear()
 
-        # First line of the box
-        Screen.raw("\n ")
-        Box.top(20) # 10 cells * 2 characters for each one
-        Screen.raw("\n")
-        
-        for i in range(20):
-            Screen.raw(" ", Box.V_LINE)
-            for j in range(10):
-                cell = self.dim[i][j]
-                if cell == '.': 
-                    Screen.raw('  ')
-                else:
-                    Screen.raw(Field._color_mapping[cell], Tetromino.BLOCK)
-                    Screen.raw(Color.RESET)
-            Screen.raw(Box.V_LINE, "\n")
-        
-        # Last line of the Box
-        Screen.raw(" ")
-        Box.bottom(20)
-        Screen.raw("\n")
+        self.b_board._print()
+        self.b_next._print()
 
-        # Draw next shape Box
-        Screen.move(30, 2)
-        Box.top(8)
-
-        Screen.move(30, 5)
-        Box.bottom(8)
-
-        Screen.move(30, 10)
+        Screen.position(30, 9)
         Screen.raw("Level:")
 
-        Screen.move(30, 11)
+        Screen.position(30, 10)
         Screen.raw("Score:")
 
 
@@ -81,7 +75,8 @@ def main():
         kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
     f = Field()
-    f._print()
+    f.start()
+    # Tetromino.rand()._print()
 
     #l = L_Tetromino()
     #l._print()

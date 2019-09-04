@@ -25,31 +25,63 @@ class Box(object):
     H_LINE = u"\u2500"
     V_LINE = u"\u2502"
 
-    @staticmethod
-    def top(size):
+    top = None
+    left = None
+    width = None
+    height = None
+
+    def __init__(self, top, left, width, height):
+        self.top = top
+        self.left = left
+        self.width = width
+        self.height  = height
+
+    def _print(self):
+        Screen.position(self.left, self.top)
+
         Screen.raw(Box.TL_CORNER)
-        for i in range(size): 
+        for i in range(self.width * 2): 
             Screen.raw(Box.H_LINE)
         Screen.raw(Box.TR_CORNER)
+        Screen.ln(self.width * 2 + 2)
 
-    @staticmethod
-    def bottom(size):
+        for i in range(self.height):
+            Screen.raw(Box.V_LINE)
+            for j in range(self.width):
+                Screen.raw('  ')
+            Screen.raw(Box.V_LINE)
+            Screen.ln(self.width * 2 + 2)
+
         Screen.raw(Box.BL_CORNER)
-        for i in range(size):
+        for i in range(self.width * 2):
             Screen.raw(Box.H_LINE)
         Screen.raw(Box.BR_CORNER)
 
-
 class Screen(object):
     @staticmethod
-    def move(x, y):
+    def position(x, y):
         """
-        ANSI sequence to move the cursor: 
+        ANSI sequence to position the cursor: 
         CSI y;xf    - move cursor to position y;x 
                     - where y represents the line from the top 
                     - and x the column from the left
         """
         Screen.raw(u"\u001b["+ str(y) + ";" + str(x) + "f")
+
+    @staticmethod
+    def move(n, dir):
+        """
+        n number of positions
+        dir direction of the move: (A=up, B=down, C=left, D=right)
+        """
+        Screen.raw(u"\u001b[" + str(n) + dir)
+
+    @staticmethod
+    def ln(n):
+        """
+        Controlled line jump, to go back n number of characters instead of inserting 0x0D
+        """
+        Screen.raw(u"\u001b[" + str(n) + 'D', u"\u001b[1B")
 
     @staticmethod
     def clear(x = 1, y = 1):
@@ -58,7 +90,7 @@ class Screen(object):
         CSI 2J      - erase all screen
         """
         Screen.raw(u"\u001b[2J")
-        Screen.move(x, y)
+        Screen.position(x, y)
 
     @staticmethod
     def raw(*args):
