@@ -2,6 +2,8 @@ import random
 
 from ansi import Screen, Color
 
+from math import ceil
+
 class Tetromino(object):
     """
     Each of the tetris game pieces are called tetrominos (from the greek prefix tetra = four),
@@ -31,12 +33,16 @@ class Tetromino(object):
         self.size = size
         self.matrix = [ ['.' for x in range(size)] for y in range(size) ]
 
-    def _print(self):
+    def _print(self, in_size = None):
+        if in_size is not None:
+            # calculate center in given size
+            padding = int(ceil((in_size - self.size) / 2))
+            Screen.move(padding, 'C')
         Screen.raw(self._color())
         for y in range(self.size):
             for x in range(self.size):
                 if self.matrix[y][x] == '.':
-                    Screen.raw('  ')
+                    Screen.move(2, 'C')
                 else:
                     Screen.raw(Tetromino.BLOCK)
             Screen.ln(self.size * 2)

@@ -1,5 +1,13 @@
 import sys
 
+__win__ = 'win' in sys.platform
+
+if __win__:
+    import ctypes
+    import msvcrt
+else:
+    import tty
+
 class Color(object):
     RESET = u"\u001b[0m"
 
@@ -48,7 +56,7 @@ class Box(object):
         for i in range(self.height):
             Screen.raw(Box.V_LINE)
             for j in range(self.width):
-                Screen.raw('  ')
+                Screen.move(2, 'C')
             Screen.raw(Box.V_LINE)
             Screen.ln(self.width * 2 + 2)
 
@@ -58,6 +66,37 @@ class Box(object):
         Screen.raw(Box.BR_CORNER)
 
 class Screen(object):
+    _restore = False
+    _mode = None
+
+    @staticmethod
+    def init():
+        if __win__:
+            # To enable colors on the console if we're on windows            
+            kernel32 = ctypes.windll.kernel32
+            kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+        else:
+            try:
+                Screen._mode = tty.tcgetattr(sys.stdin)
+                tty.setraw(sys.stdin)
+                Screen._restore = True
+                print(Screen._mode, Screen._restore)
+            except tty.error:    # This is the same as termios.error
+                print(tty.error)
+                sys.exit(-1)
+
+    @staticmethod
+    def close():
+        if Screen._restore:
+            tty.tcsetattr(sys.stdin, tty.TCSAFLUSH, Screen._mode)
+
+    @staticmethod
+    def read():
+        if __win__:
+            return ord(msvcrt.getch())
+        else:
+            return ord(sys.stdin.read(1))
+
     @staticmethod
     def position(x, y):
         """
@@ -72,7 +111,7 @@ class Screen(object):
     def move(n, dir):
         """
         n number of positions
-        dir direction of the move: (A=up, B=down, C=left, D=right)
+        dir direction of the move: (A=up, B=down, C=right, D=left)
         """
         Screen.raw(u"\u001b[" + str(n) + dir)
 

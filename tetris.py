@@ -13,7 +13,6 @@ Documentation of some printable special characters:
 In python 2.7 we can't have a print method
 
 """
-import sys
 import threading
 import time
 
@@ -39,18 +38,18 @@ class Field(object):
         self.t_current = None
         self.t_next = None
 
-    # def draw_blocks(self):
-    #     Screen.position(Field._field.left, Field._field.top)
-    #     for i in range(20):
-    #         for j in range(10):
-    #             cell = self.dim[i][j]
-    #             if cell == '.': 
-    #                 Screen.raw('  ')
-    #             else:
-    #                 Screen.raw(Field._color_mapping[cell], Tetromino.BLOCK)
-    #                 Screen.raw(Color.RESET)
-    #         Screen.raw(Box.V_LINE)
-    #         Screen.ln(20)
+    def draw_blocks(self):
+        Screen.position(self.b_board.left + 1, self.b_board.top + 1)
+        for i in range(self.b_board.height):
+            for j in range(self.b_board.width):
+                cell = self.dim[i][j]
+                if cell == '.': 
+                    Screen.move(2, 'C')
+                else:
+                    Screen.raw(Field._color_mapping[cell], Tetromino.BLOCK)
+                    Screen.raw(Color.RESET)
+            Screen.raw(Box.V_LINE)
+            Screen.ln(self.b_board.width * 2 + 1) # +1 is for the last character we actually wrote
 
     def start(self):
         # draw the main board
@@ -65,16 +64,40 @@ class Field(object):
         Screen.position(30, 10)
         Screen.raw("Score:")
 
+        self.draw_blocks()
+
+        if self.t_next is not None:
+            Screen.position(self.b_next.left + 1, self.b_next.top + 1)
+            self.t_next._print(self.b_next.width)
+
+
+        Screen.position(1,1)
+
+        # Here we'll have 2 threads, one counting time and moving the block down
+        # and the main one waiting for input
+        while True:
+            c = Screen.read() # Read one char from the stdinput
+            
+            if c == 3: # This corresponds to Ctrl + C
+                break 
+
+            Screen.raw("New char", chr(c))
+            
 
 def main():
-    if 'win' in sys.platform:
-        # To enable colors on the console if we're on windows
-        import ctypes
-        
-        kernel32 = ctypes.windll.kernel32
-        kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+    Screen.init()
 
     f = Field()
+
+    f.t_next = Tetromino.rand()
+    f.t_current = Tetromino.rand()
+    f.t_current.pos = 
+
+    # k = Field._color_mapping.keys()
+    # for i in range(f.b_board.height):
+    #     for j in range(f.b_board.width):
+    #         f.dim[i][j] = random.choice(k)
+
     f.start()
     # Tetromino.rand()._print()
 
@@ -123,8 +146,7 @@ def main():
 
     # raw(u"\u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588\n\u001b[48;5;239m\u001b[K\n")
     
-    time.sleep(2)
-    
+    Screen.close()
     # We clear the screen before we finish
     Screen.clear()
 
