@@ -44,12 +44,18 @@ class Field(object):
             for j in range(self.b_board.width):
                 cell = self.dim[i][j]
                 if cell == '.': 
-                    Screen.move(2, 'C')
+                    Screen.raw('  ')
                 else:
                     Screen.raw(Field._color_mapping[cell], Tetromino.BLOCK)
                     Screen.raw(Color.RESET)
             Screen.raw(Box.V_LINE)
             Screen.ln(self.b_board.width * 2 + 1) # +1 is for the last character we actually wrote
+
+        if self.t_next is not None:
+            Screen.position(self.b_next.left + 1, self.b_next.top + 1)
+            self.t_next._print(self.b_next.width)
+
+        Screen.position(1,1)
 
     def start(self):
         # draw the main board
@@ -58,18 +64,15 @@ class Field(object):
         self.b_board._print()
         self.b_next._print()
 
+        # Add level and score
         Screen.position(30, 9)
         Screen.raw("Level:")
 
         Screen.position(30, 10)
         Screen.raw("Score:")
 
+
         self.draw_blocks()
-
-        if self.t_next is not None:
-            Screen.position(self.b_next.left + 1, self.b_next.top + 1)
-            self.t_next._print(self.b_next.width)
-
 
         Screen.position(1,1)
 
@@ -91,7 +94,7 @@ def main():
 
     f.t_next = Tetromino.rand()
     f.t_current = Tetromino.rand()
-    f.t_current.pos = 
+    f.t_current.pos = (0,0)
 
     # k = Field._color_mapping.keys()
     # for i in range(f.b_board.height):

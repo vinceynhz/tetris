@@ -56,7 +56,7 @@ class Box(object):
         for i in range(self.height):
             Screen.raw(Box.V_LINE)
             for j in range(self.width):
-                Screen.move(2, 'C')
+                Screen.raw('  ')
             Screen.raw(Box.V_LINE)
             Screen.ln(self.width * 2 + 2)
 
