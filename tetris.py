@@ -77,7 +77,6 @@ class Field(object):
                 self.b_next._print()
                 self.draw_blocks()
 
-
             Screen.clear_line()
             Screen.raw(str(c))
 

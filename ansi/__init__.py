@@ -68,12 +68,20 @@ class Box(object):
 class Screen(object):
     _restore = False
     _mode = None
-    _arrows = {
+    _arrows_no_win = {
         65: 'UP',
         66: 'DOWN',
         67: 'RIGHT',
         68: 'LEFT'
     }
+    _arrows_win = {
+        72: 'UP',
+        75: 'LEFT',
+        77: 'RIGHT',
+        80: 'DOWN'
+    }
+    _arrows = _arrows_win if __win__ else _arrows_no_win
+    _arrow_st = 224 if __win__ else 27 
 
     @staticmethod
     def init():
@@ -148,11 +156,13 @@ class Screen(object):
 
     @staticmethod
     def is_arrow(n1):
-        if n1 == 27:
-            # we read next two
-            n2, n3 = Screen.read(), Screen.read()
-            if n2 == 91 and n3 in Screen._arrows:
-                return Screen._arrows[n3]
+        # If we have the beginning of an arrow
+        if n1 == Screen._arrow_st:
+            arrow_key = None
+            if __win__ or Screen.read() == 91:
+                arrow_key = Screen.read()
+            if arrow_key is not None and arrow_key in Screen._arrows:
+                return Screen._arrows[arrow_key]
         return None
 
     @staticmethod
