@@ -68,6 +68,12 @@ class Box(object):
 class Screen(object):
     _restore = False
     _mode = None
+    _arrows = {
+        65: 'UP',
+        66: 'DOWN',
+        67: 'RIGHT',
+        68: 'LEFT'
+    }
 
     @staticmethod
     def init():
@@ -125,11 +131,29 @@ class Screen(object):
     @staticmethod
     def clear(x = 1, y = 1):
         """ 
-        Call ANSI sequences
+        Call ANSI sequence
         CSI 2J      - erase all screen
         """
         Screen.raw(u"\u001b[2J")
         Screen.position(x, y)
+
+    @staticmethod
+    def clear_line():
+        """
+        Call ANSI sequence
+        CSI 2K - erase all line
+        """
+        Screen.raw(u"\u001b[2K")
+        Screen.move(1000, 'D')
+
+    @staticmethod
+    def is_arrow(n1):
+        if n1 == 27:
+            # we read next two
+            n2, n3 = Screen.read(), Screen.read()
+            if n2 == 91 and n3 in Screen._arrows:
+                return Screen._arrows[n3]
+        return None
 
     @staticmethod
     def raw(*args):

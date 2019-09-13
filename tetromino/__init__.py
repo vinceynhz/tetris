@@ -99,22 +99,28 @@ class T_Tetromino(Tetromino):
 class O_Tetromino(Tetromino):
     def __init__(self):
         Tetromino.__init__(self, 2)
-        self.matrix[0][0] = 'x'
-        self.matrix[0][1] = 'x'
-        self.matrix[1][0] = 'x'
-        self.matrix[1][1] = 'x'
+        self.matrix[0][0] = 'O'
+        self.matrix[0][1] = 'O'
+        self.matrix[1][0] = 'O'
+        self.matrix[1][1] = 'O'
 
     def _color(self):
         return Color.FG.YELLOW
+
+    def rotate_cw(self):
+        pass
+
+    def rotate_ccw(self):
+        pass
 
 
 class S_Tetromino(Tetromino):
     def __init__(self):
         Tetromino.__init__(self, 3)
-        self.matrix[0][1] = 'x'
-        self.matrix[0][2] = 'x'
-        self.matrix[1][0] = 'x'
-        self.matrix[1][1] = 'x'
+        self.matrix[0][1] = 'S'
+        self.matrix[0][2] = 'S'
+        self.matrix[1][0] = 'S'
+        self.matrix[1][1] = 'S'
 
     def _color(self):
         return Color.FG.GREEN
@@ -123,10 +129,10 @@ class S_Tetromino(Tetromino):
 class Z_Tetromino(Tetromino):
     def __init__(self):
         Tetromino.__init__(self, 3)
-        self.matrix[0][0] = 'x'
-        self.matrix[0][1] = 'x'
-        self.matrix[1][1] = 'x'
-        self.matrix[1][2] = 'x'
+        self.matrix[0][0] = 'Z'
+        self.matrix[0][1] = 'Z'
+        self.matrix[1][1] = 'Z'
+        self.matrix[1][2] = 'Z'
 
     def _color(self):
         return Color.FG.RED
@@ -135,10 +141,10 @@ class Z_Tetromino(Tetromino):
 class l_Tetromino(Tetromino):
     def __init__(self):
         Tetromino.__init__(self)
-        self.matrix[0][1] = 'x'
-        self.matrix[1][1] = 'x'
-        self.matrix[2][1] = 'x'
-        self.matrix[3][1] = 'x'
+        self.matrix[0][1] = 'l'
+        self.matrix[1][1] = 'l'
+        self.matrix[2][1] = 'l'
+        self.matrix[3][1] = 'l'
 
     def _color(self):
         return Color.FG.CYAN

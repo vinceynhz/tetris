@@ -57,6 +57,30 @@ class Field(object):
 
         Screen.position(1,1)
 
+    def run(self):
+        # Here we'll have 2 threads, one counting time and moving the block down
+        # and the main one waiting for input
+        while True:
+            c = Screen.read() # Read one char from the stdinput
+            
+            if c == 3: # This corresponds to Ctrl + C
+                break 
+
+            a = Screen.is_arrow(c)
+            if a is not None:
+                if a == 'LEFT':
+                    self.t_next.rotate_ccw()
+                elif a == 'RIGHT':
+                    self.t_next.rotate_cw()
+                elif a == 'UP':
+                    self.t_next = Tetromino.rand()
+                self.b_next._print()
+                self.draw_blocks()
+
+
+            Screen.clear_line()
+            Screen.raw(str(c))
+
     def start(self):
         # draw the main board
         Screen.clear()
@@ -75,16 +99,6 @@ class Field(object):
         self.draw_blocks()
 
         Screen.position(1,1)
-
-        # Here we'll have 2 threads, one counting time and moving the block down
-        # and the main one waiting for input
-        while True:
-            c = Screen.read() # Read one char from the stdinput
-            
-            if c == 3: # This corresponds to Ctrl + C
-                break 
-
-            Screen.raw("New char", chr(c))
             
 
 def main():
@@ -101,7 +115,12 @@ def main():
     #     for j in range(f.b_board.width):
     #         f.dim[i][j] = random.choice(k)
 
-    f.start()
+    try:
+        f.start()
+        f.run()
+    finally:
+        Screen.close()
+        Screen.clear()
     # Tetromino.rand()._print()
 
     #l = L_Tetromino()
@@ -145,13 +164,6 @@ def main():
 
     # i = l_Tetromino()
     # i.print()
-
-
-    # raw(u"\u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588\n\u001b[48;5;239m\u001b[K\n")
-    
-    Screen.close()
-    # We clear the screen before we finish
-    Screen.clear()
 
 if __name__ == '__main__':
     main()
