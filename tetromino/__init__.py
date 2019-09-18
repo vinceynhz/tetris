@@ -2,7 +2,9 @@ import random
 
 from ansi import Screen, Color
 
-from math import ceil
+from math import floor
+
+
 
 class Tetromino(object):
     """
@@ -25,6 +27,10 @@ class Tetromino(object):
     ]
 
     @staticmethod
+    def center(in_size, size):
+        return int(floor((in_size - size) / 2))
+
+    @staticmethod
     def rand():
         return Tetromino._constructors[random.randint(0,6)]()
 
@@ -36,7 +42,7 @@ class Tetromino(object):
     def _print(self, in_size = None):
         if in_size is not None:
             # calculate center in given size
-            padding = int(ceil((in_size - self.size) / 2))
+            padding = Tetromino.center(in_size, self.size)
             Screen.move(padding, 'C')
         Screen.raw(self._color())
         for y in range(self.size):
@@ -87,10 +93,10 @@ class J_Tetromino(Tetromino):
 class T_Tetromino(Tetromino):
     def __init__(self):
         Tetromino.__init__(self, 3)
+        self.matrix[0][1] = 'T'
         self.matrix[1][0] = 'T'
         self.matrix[1][1] = 'T'
         self.matrix[1][2] = 'T'
-        self.matrix[2][1] = 'T'
 
     def _color(self):
         return Color.FG.MAGENTA

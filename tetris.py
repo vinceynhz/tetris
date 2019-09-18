@@ -10,14 +10,19 @@ Documentation of some printable special characters:
 
 - https://www.w3schools.com/charsets/ref_utf_box.asp
 
-In python 2.7 we can't have a print method
+Rx Py (for python 3.6 and above):
+
+- https://github.com/ReactiveX/RxPY
 
 """
 import threading
 import time
 
+from math import floor
+
 from tetromino import *
 from ansi import *
+
 
 class Field(object):
     _color_mapping = {
@@ -39,6 +44,7 @@ class Field(object):
         self.t_next = None
 
     def draw_blocks(self):
+        # Draw the main board and whatever elements are there
         Screen.position(self.b_board.left + 1, self.b_board.top + 1)
         for i in range(self.b_board.height):
             for j in range(self.b_board.width):
@@ -51,8 +57,20 @@ class Field(object):
             Screen.raw(Box.V_LINE)
             Screen.ln(self.b_board.width * 2 + 1) # +1 is for the last character we actually wrote
 
+        # Draw the current tetromino falling
+        if self.t_current is not None:
+            Screen.position(
+                self.b_board.left + 1 + (self.t_current.pos[0] * 2),
+                self.b_board.top + self.t_current.pos[1] + 1,
+            )
+            self.t_current._print()
+
+        # Draw the next tetromino (aka spare)
         if self.t_next is not None:
-            Screen.position(self.b_next.left + 1, self.b_next.top + 1)
+            Screen.position(
+                self.b_next.left, 
+                self.b_next.top + 1
+            )
             self.t_next._print(self.b_next.width)
 
         Screen.position(1,1)
@@ -69,12 +87,13 @@ class Field(object):
             a = Screen.is_arrow(c)
             if a is not None:
                 if a == 'LEFT':
-                    self.t_next.rotate_ccw()
+                    self.t_current.rotate_ccw()
                 elif a == 'RIGHT':
-                    self.t_next.rotate_cw()
+                    self.t_current.rotate_cw()
                 elif a == 'UP':
-                    self.t_next = Tetromino.rand()
-                self.b_next._print()
+                    self.t_current = Tetromino.rand()
+                    self.t_current.pos = (Tetromino.center(self.b_board.width, self.t_current.size), 0)
+
                 self.draw_blocks()
 
             Screen.clear_line()
@@ -107,7 +126,8 @@ def main():
 
     f.t_next = Tetromino.rand()
     f.t_current = Tetromino.rand()
-    f.t_current.pos = (0,0)
+    f.t_current.pos = (Tetromino.center(f.b_board.width, f.t_current.size), 0)
+    print f.t_current.pos
 
     # k = Field._color_mapping.keys()
     # for i in range(f.b_board.height):
