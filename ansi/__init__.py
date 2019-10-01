@@ -1,4 +1,4 @@
-    import sys
+import sys
 
 __win__ = 'win' in sys.platform
 
