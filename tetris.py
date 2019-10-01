@@ -26,14 +26,17 @@ from ansi import *
 
 class Field(object):
     _dim_mapping = {
-        'L': (Color.FG.WHITE, Tetromino.BLOCK, Color.RESET),
-        'J': (Color.FG.BLUE, Tetromino.BLOCK, Color.RESET),
-        'T': (Color.FG.MAGENTA, Tetromino.BLOCK, Color.RESET),
-        'O': (Color.FG.YELLOW, Tetromino.BLOCK, Color.RESET),
-        'S': (Color.FG.RED, Tetromino.BLOCK, Color.RESET),
-        'Z': (Color.FG.GREEN, Tetromino.BLOCK, Color.RESET),
-        'l': (Color.FG.CYAN, Tetromino.BLOCK, Color.RESET),
-        '.': ('  ')
+    """ This is to map whichever characters are present in the dim matrix 
+        letters represent which type of tetromino there are
+    """
+        'L': (L_Tetromino.color, Tetromino.BLOCK, Color.RESET),
+        'J': (J_Tetromino.color, Tetromino.BLOCK, Color.RESET),
+        'T': (T_Tetromino.color, Tetromino.BLOCK, Color.RESET),
+        'O': (O_Tetromino.color, Tetromino.BLOCK, Color.RESET),
+        'S': (S_Tetromino.color, Tetromino.BLOCK, Color.RESET),
+        'Z': (Z_Tetromino.color, Tetromino.BLOCK, Color.RESET),
+        'l': (l_Tetromino.color, Tetromino.BLOCK, Color.RESET),
+        '.': (Box.SPACE)
     }
 
 

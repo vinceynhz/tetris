@@ -16,6 +16,8 @@ class Tetromino(object):
     """
     BLOCK = u"\u2588\u2588"
 
+    color = Color.RESET
+
     _constructors = [
         lambda: L_Tetromino(),
         lambda: J_Tetromino(),
@@ -54,9 +56,6 @@ class Tetromino(object):
             Screen.ln(self.size * 2)
         Screen.raw(Color.RESET)
 
-    def _color(self):
-        return Color.RESET
-
     def rotate_cw(self):
         new_matrix = [ [ self.matrix[self.size - 1 - x][y] for x in range(self.size) ] for y in range(self.size) ]
         self.matrix = new_matrix
@@ -65,7 +64,11 @@ class Tetromino(object):
         new_matrix = [ [ self.matrix[x][self.size - y - 1] for x in range(self.size) ] for y in range(self.size) ]
         self.matrix = new_matrix
 
+    def _color(self):
+        return Tetromino.color
+
 class L_Tetromino(Tetromino):
+    color = Color.FG.WHITE
     def __init__(self):
         Tetromino.__init__(self, 3)
         self.matrix[0][1] = 'L'
@@ -74,10 +77,11 @@ class L_Tetromino(Tetromino):
         self.matrix[2][2] = 'L'
 
     def _color(self):
-        return Color.FG.WHITE
+        return L_Tetromino.color
 
 
 class J_Tetromino(Tetromino):
+    color = Color.FG.BLUE
     def __init__(self):
         Tetromino.__init__(self, 3)
         self.matrix[0][1] = 'J'
@@ -86,10 +90,10 @@ class J_Tetromino(Tetromino):
         self.matrix[2][0] = 'J'
 
     def _color(self):
-        return Color.FG.BLUE
-
+        return J_Tetromino.color
 
 class T_Tetromino(Tetromino):
+    color = Color.FG.MAGENTA
     def __init__(self):
         Tetromino.__init__(self, 3)
         self.matrix[0][1] = 'T'
@@ -98,10 +102,11 @@ class T_Tetromino(Tetromino):
         self.matrix[1][2] = 'T'
 
     def _color(self):
-        return Color.FG.MAGENTA
+        return T_Tetromino.color
 
 
 class O_Tetromino(Tetromino):
+    color = Color.FG.YELLOW
     def __init__(self):
         Tetromino.__init__(self, 2)
         self.matrix[0][0] = 'O'
@@ -110,7 +115,7 @@ class O_Tetromino(Tetromino):
         self.matrix[1][1] = 'O'
 
     def _color(self):
-        return Color.FG.YELLOW
+        return O_Tetromino.color
 
     def rotate_cw(self):
         pass
@@ -120,6 +125,7 @@ class O_Tetromino(Tetromino):
 
 
 class S_Tetromino(Tetromino):
+    color = Color.FG.GREEN
     def __init__(self):
         Tetromino.__init__(self, 3)
         self.matrix[0][1] = 'S'
@@ -128,10 +134,11 @@ class S_Tetromino(Tetromino):
         self.matrix[1][1] = 'S'
 
     def _color(self):
-        return Color.FG.GREEN
+        return S_Tetromino.color
 
 
 class Z_Tetromino(Tetromino):
+    color = Color.FG.RED
     def __init__(self):
         Tetromino.__init__(self, 3)
         self.matrix[0][0] = 'Z'
@@ -140,10 +147,11 @@ class Z_Tetromino(Tetromino):
         self.matrix[1][2] = 'Z'
 
     def _color(self):
-        return Color.FG.RED
+        return Z_Tetromino.color
 
 
 class l_Tetromino(Tetromino):
+    color = Color.FG.CYAN
     def __init__(self):
         Tetromino.__init__(self)
         self.matrix[0][1] = 'l'
@@ -152,4 +160,4 @@ class l_Tetromino(Tetromino):
         self.matrix[3][1] = 'l'
 
     def _color(self):
-        return Color.FG.CYAN
+        return 

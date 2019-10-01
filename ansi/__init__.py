@@ -32,6 +32,7 @@ class Box(object):
     BR_CORNER = u"\u2518"
     H_LINE = u"\u2500"
     V_LINE = u"\u2502"
+    SPACE = '  '
 
     top = None
     """ top relative to the screen """
@@ -58,7 +59,7 @@ class Box(object):
         for i in range(self.height):
             Screen.raw(Box.V_LINE)
             for j in range(self.width):
-                Screen.raw('  ')
+                Screen.raw(Box.SPACE)
             Screen.raw(Box.V_LINE)
             Screen.ln(self.width * 2 + 2)
 
