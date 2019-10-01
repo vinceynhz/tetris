@@ -25,15 +25,17 @@ from ansi import *
 
 
 class Field(object):
-    _color_mapping = {
-        'L': Color.FG.WHITE,
-        'J': Color.FG.BLUE,
-        'T': Color.FG.MAGENTA,
-        'O': Color.FG.YELLOW,
-        'S': Color.FG.RED,
-        'Z': Color.FG.GREEN,
-        'l': Color.FG.CYAN
+    _dim_mapping = {
+        'L': (Color.FG.WHITE, Tetromino.BLOCK, Color.RESET),
+        'J': (Color.FG.BLUE, Tetromino.BLOCK, Color.RESET),
+        'T': (Color.FG.MAGENTA, Tetromino.BLOCK, Color.RESET),
+        'O': (Color.FG.YELLOW, Tetromino.BLOCK, Color.RESET),
+        'S': (Color.FG.RED, Tetromino.BLOCK, Color.RESET),
+        'Z': (Color.FG.GREEN, Tetromino.BLOCK, Color.RESET),
+        'l': (Color.FG.CYAN, Tetromino.BLOCK, Color.RESET),
+        '.': ('  ')
     }
+
 
     def __init__(self):
         self.dim = [ [ '.' for x in range(10) ] for y in range(20) ]
@@ -46,14 +48,10 @@ class Field(object):
     def draw_blocks(self):
         # Draw the main board and whatever elements are there
         Screen.position(self.b_board.left + 1, self.b_board.top + 1)
-        for i in range(self.b_board.height):
-            for j in range(self.b_board.width):
-                cell = self.dim[i][j]
-                if cell == '.': 
-                    Screen.raw('  ')
-                else:
-                    Screen.raw(Field._color_mapping[cell], Tetromino.BLOCK)
-                    Screen.raw(Color.RESET)
+
+        for row in self.dim:
+            for cell in row:
+                Screen.raw(*Field._dim_mapping[cell])
             Screen.raw(Box.V_LINE)
             Screen.ln(self.b_board.width * 2 + 1) # +1 is for the last character we actually wrote
 
@@ -113,10 +111,12 @@ class Field(object):
         Screen.position(30, 10)
         Screen.raw("Score:")
 
-
         self.draw_blocks()
 
         Screen.position(1,1)
+
+    def _push_down(self):
+        pass
             
 
 def main():

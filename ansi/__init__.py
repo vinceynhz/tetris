@@ -34,7 +34,9 @@ class Box(object):
     V_LINE = u"\u2502"
 
     top = None
+    """ top relative to the screen """
     left = None
+    """ left relative to the screen """
     width = None
     height = None
 
@@ -168,5 +170,6 @@ class Screen(object):
     @staticmethod
     def raw(*args):
         for arg in args:
-            sys.stdout.write(arg)
+            if arg is not None:
+                sys.stdout.write(arg)
         sys.stdout.flush()

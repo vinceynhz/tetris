@@ -65,7 +65,6 @@ class Tetromino(object):
         new_matrix = [ [ self.matrix[x][self.size - y - 1] for x in range(self.size) ] for y in range(self.size) ]
         self.matrix = new_matrix
 
-
 class L_Tetromino(Tetromino):
     def __init__(self):
         Tetromino.__init__(self, 3)
