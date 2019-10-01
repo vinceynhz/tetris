@@ -1,4 +1,4 @@
-import sys
+    import sys
 
 __win__ = 'win' in sys.platform
 
@@ -7,6 +7,29 @@ if __win__:
     import msvcrt
 else:
     import tty
+
+class Coord(object):
+    x = None
+    y = None
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __call__(self):
+        return (self.x, self.y)
+
+    def __add__(self, other):
+        if type(other) is tuple:
+            return (self.x + other[0], self.y + other[1])
+        return (self.x + other.x, self.y + other.y)
+
+    def map(self, command_x, command_y):
+        return (command_x(self.x), command_y(self.y))
+
+    def __str__(self):
+        return "({0},{1})".format(self.x, self.y)
+
 
 class Color(object):
     RESET = u"\u001b[0m"
@@ -30,43 +53,32 @@ class Box(object):
     TR_CORNER = u"\u2510"
     BL_CORNER = u"\u2514"
     BR_CORNER = u"\u2518"
-    H_LINE = u"\u2500"
+    H_LINE = u"\u2500\u2500"
     V_LINE = u"\u2502"
     SPACE = '  '
 
-    top = None
-    """ top relative to the screen """
-    left = None
-    """ left relative to the screen """
+    pos = None
     width = None
     height = None
 
     def __init__(self, top, left, width, height):
-        self.top = top
-        self.left = left
+        """ top and left are relative to the screen """
+        self.pos = Coord(left, top)
         self.width = width
         self.height  = height
 
     def _print(self):
-        Screen.position(self.left, self.top)
+        Screen.position(self.pos())
 
-        Screen.raw(Box.TL_CORNER)
-        for i in range(self.width * 2): 
-            Screen.raw(Box.H_LINE)
-        Screen.raw(Box.TR_CORNER)
+        Screen.raw(Box.TL_CORNER, Box.H_LINE * self.width, Box.TR_CORNER)
         Screen.ln(self.width * 2 + 2)
 
         for i in range(self.height):
-            Screen.raw(Box.V_LINE)
-            for j in range(self.width):
-                Screen.raw(Box.SPACE)
-            Screen.raw(Box.V_LINE)
+            Screen.raw(Box.V_LINE, Box.SPACE * self.width, Box.V_LINE)
             Screen.ln(self.width * 2 + 2)
 
-        Screen.raw(Box.BL_CORNER)
-        for i in range(self.width * 2):
-            Screen.raw(Box.H_LINE)
-        Screen.raw(Box.BR_CORNER)
+        Screen.raw(Box.BL_CORNER, Box.H_LINE * self.width, Box.BR_CORNER)
+
 
 class Screen(object):
     _restore = False
@@ -115,29 +127,32 @@ class Screen(object):
             return ord(sys.stdin.read(1))
 
     @staticmethod
-    def position(x, y):
+    def position(x, y = None):
         """
         ANSI sequence to position the cursor: 
         CSI y;xf    - move cursor to position y;x 
                     - where y represents the line from the top 
                     - and x the column from the left
         """
-        Screen.raw(u"\u001b["+ str(y) + ";" + str(x) + "f")
+        if type(x) is tuple:
+            y = x[1]
+            x = x[0]
+        Screen.raw(u"\u001b[{0};{1}f".format(y,x))
 
     @staticmethod
-    def move(n, dir):
+    def move(n, d):
         """
         n number of positions
         dir direction of the move: (A=up, B=down, C=right, D=left)
         """
-        Screen.raw(u"\u001b[" + str(n) + dir)
+        Screen.raw(u"\u001b[{0}{1}".format(n, d))
 
     @staticmethod
     def ln(n):
         """
         Controlled line jump, to go back n number of characters instead of inserting 0x0D
         """
-        Screen.raw(u"\u001b[" + str(n) + 'D', u"\u001b[1B")
+        Screen.raw(u"\u001b[{0}D\u001b[1B".format(n))
 
     @staticmethod
     def clear(x = 1, y = 1):

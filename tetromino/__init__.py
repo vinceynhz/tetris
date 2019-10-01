@@ -47,9 +47,9 @@ class Tetromino(object):
             padding = Tetromino.center(in_size, self.size)
             Screen.move(padding, 'C')
         Screen.raw(self._color())
-        for y in range(self.size):
-            for x in range(self.size):
-                if self.matrix[y][x] == '.':
+        for row in self.matrix:
+            for col in row:
+                if col == '.':
                     Screen.move(2, 'C')
                 else:
                     Screen.raw(Tetromino.BLOCK)

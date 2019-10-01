@@ -39,9 +39,9 @@ class Field(object):
         '.': (Box.SPACE)
     }
 
-
     def __init__(self):
         self.dim = [ [ '.' for x in range(10) ] for y in range(20) ]
+
         self.b_board = Box(2, 2, 10, 20)
         self.b_next = Box(2, 30, 4, 4)
         
@@ -50,7 +50,7 @@ class Field(object):
 
     def draw_blocks(self):
         # Draw the main board and whatever elements are there
-        Screen.position(self.b_board.left + 1, self.b_board.top + 1)
+        Screen.position(self.b_board.pos + (1,1))
 
         for row in self.dim:
             for cell in row:
@@ -60,18 +60,17 @@ class Field(object):
 
         # Draw the current tetromino falling
         if self.t_current is not None:
-            Screen.position(
-                self.b_board.left + 1 + (self.t_current.pos[0] * 2),
-                self.b_board.top + self.t_current.pos[1] + 1,
+            # Get the current position of the current tetromino
+            t_current_pos = self.b_board.pos + self.t_current.pos.map(
+                lambda x: 1 + (x * 2),
+                lambda y: 1 + y
             )
+            Screen.position(t_current_pos)
             self.t_current._print()
 
         # Draw the next tetromino (aka spare)
         if self.t_next is not None:
-            Screen.position(
-                self.b_next.left, 
-                self.b_next.top + 1
-            )
+            Screen.position(self.b_next.pos + (0, 1))
             self.t_next._print(self.b_next.width)
 
         Screen.position(1,1)
@@ -93,7 +92,7 @@ class Field(object):
                     self.t_current.rotate_cw()
                 elif a == 'UP':
                     self.t_current = Tetromino.rand()
-                    self.t_current.pos = (Tetromino.center(self.b_board.width, self.t_current.size), 0)
+                    self.t_current.pos = Coord(Tetromino.center(self.b_board.width, self.t_current.size), 0)
 
                 self.draw_blocks()
 
@@ -118,9 +117,11 @@ class Field(object):
 
         Screen.position(1,1)
 
+
     def _push_down(self):
-        pass
-            
+        board_pos = self.b_board.pos + (1,1)
+        cur_pos = self.t_current.pos
+
 
 def main():
     Screen.init()
@@ -129,8 +130,7 @@ def main():
 
     f.t_next = Tetromino.rand()
     f.t_current = Tetromino.rand()
-    f.t_current.pos = (Tetromino.center(f.b_board.width, f.t_current.size), 0)
-    print f.t_current.pos
+    f.t_current.pos = Coord(Tetromino.center(f.b_board.width, f.t_current.size), 0)
 
     # k = Field._color_mapping.keys()
     # for i in range(f.b_board.height):
@@ -143,49 +143,6 @@ def main():
     finally:
         Screen.close()
         Screen.clear()
-    # Tetromino.rand()._print()
-
-    #l = L_Tetromino()
-    #l._print()
-    # Screen.raw('\n')
-
-    # l.rotate_cw()
-    # l.print()
-    # l.rotate_cw()
-    # l.print()
-    # l.rotate_cw()
-    # l.print()
-    # l.rotate_cw()
-    # l.print() # back to the original position
-
-    # Screen.raw('\n')
-    
-    # l.rotate_ccw()
-    # l.print()
-    # l.rotate_ccw()
-    # l.print()
-    # l.rotate_ccw()
-    # l.print()
-    # l.rotate_ccw()
-    # l.print() # back to the original position
-
-    # j = J_Tetromino()
-    # j.print()
-
-    # t = T_Tetromino()
-    # t.print()
-
-    # o = O_Tetromino()
-    # o.print()
-
-    # s = S_Tetromino()
-    # s.print()
-
-    # z = Z_Tetromino()
-    # z.print()
-
-    # i = l_Tetromino()
-    # i.print()
 
 if __name__ == '__main__':
     main()
