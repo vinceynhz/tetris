@@ -17,11 +17,11 @@ Rx Py (for python 3.6 and above):
 """
 import threading
 import time
+import ansi
 
-from math import floor
-
+from ui import *
 from tetromino import *
-from ansi import *
+from math import floor
 
 
 class Field(object):
@@ -39,6 +39,14 @@ class Field(object):
         '.': (Box.SPACE)
     }
 
+    _move_mapping = {
+        'CCW':       lambda f: f.t_current.rotate_ccw(),
+        'CW':        lambda f: f.t_current.rotate_cw(), 
+        'HARD_DROP': lambda f: f.new_current(),
+        'LEFT':      lambda f: f.left_current(),
+        'RIGHT':     lambda f: f.right_current()
+    }
+
     def __init__(self):
         self.dim = [ [ '.' for x in range(10) ] for y in range(20) ]
 
@@ -48,15 +56,30 @@ class Field(object):
         self.t_current = None
         self.t_next = None
 
+    def new_current(self):
+        self.t_current = Tetromino.rand()
+        self.t_current.pos = Coord(
+            Tetromino.center(self.b_board.width, self.t_current.size),  # x
+            0,                                                          # y
+            self.b_board.width - 1 ,                                    # max_x
+            self.b_board.height - 1                                     # max_y
+        )
+
+    def left_current(self):
+        self.t_current.pos -= (1,0)
+
+    def right_current(self):
+        self.t_current.pos += (1,0)
+
     def draw_blocks(self):
         # Draw the main board and whatever elements are there
-        Screen.position(self.b_board.pos + (1,1))
+        ansi.position(self.b_board.pos + (1,1))
 
         for row in self.dim:
             for cell in row:
-                Screen.raw(*Field._dim_mapping[cell])
-            Screen.raw(Box.V_LINE)
-            Screen.ln(self.b_board.width * 2 + 1) # +1 is for the last character we actually wrote
+                ansi.raw(*Field._dim_mapping[cell])
+            ansi.raw(Box.V_LINE)
+            ansi.ln(self.b_board.width * 2 + 1) # +1 is for the last character we actually wrote
 
         # Draw the current tetromino falling
         if self.t_current is not None:
@@ -65,57 +88,48 @@ class Field(object):
                 lambda x: 1 + (x * 2),
                 lambda y: 1 + y
             )
-            Screen.position(t_current_pos)
+            ansi.position(t_current_pos)
             self.t_current._print()
 
         # Draw the next tetromino (aka spare)
         if self.t_next is not None:
-            Screen.position(self.b_next.pos + (0, 1))
+            ansi.position(self.b_next.pos + (0, 1))
             self.t_next._print(self.b_next.width)
 
-        Screen.position(1,1)
+        ansi.position(1,1)
 
     def run(self):
         # Here we'll have 2 threads, one counting time and moving the block down
         # and the main one waiting for input
-        while True:
-            c = Screen.read() # Read one char from the stdinput
-            
-            if c == 3: # This corresponds to Ctrl + C
-                break 
+        for c in ansi.read():
+            if c == 3: 
+                # If Ctrl + C
+                break
 
-            a = Screen.is_arrow(c)
-            if a is not None:
-                if a == 'LEFT':
-                    self.t_current.rotate_ccw()
-                elif a == 'RIGHT':
-                    self.t_current.rotate_cw()
-                elif a == 'UP':
-                    self.t_current = Tetromino.rand()
-                    self.t_current.pos = Coord(Tetromino.center(self.b_board.width, self.t_current.size), 0)
+            with ansi.get_movement(c) as m:
+                if m in Field._move_mapping:
+                    Field._move_mapping[m](self)
+                    self.draw_blocks()
 
-                self.draw_blocks()
-
-            Screen.clear_line()
-            Screen.raw(str(c))
+            ansi.clear_line()
+            ansi.raw(str(c))
 
     def start(self):
         # draw the main board
-        Screen.clear()
+        ansi.clear()
 
         self.b_board._print()
         self.b_next._print()
 
         # Add level and score
-        Screen.position(30, 9)
-        Screen.raw("Level:")
-
-        Screen.position(30, 10)
-        Screen.raw("Score:")
+        ansi.position(30, 9)
+        ansi.raw("Level:") 
+        ansi.position(30, 10)
+        ansi.raw("Score:")
 
         self.draw_blocks()
 
-        Screen.position(1,1)
+        ansi.position(1,1)
 
 
     def _push_down(self):
@@ -124,25 +138,20 @@ class Field(object):
 
 
 def main():
-    Screen.init()
+    with ansi.Terminal():
+        f = Field()
+        f.t_next = Tetromino.rand()
+        f.new_current()
 
-    f = Field()
+        f.start()
+        f.run()
 
-    f.t_next = Tetromino.rand()
-    f.t_current = Tetromino.rand()
-    f.t_current.pos = Coord(Tetromino.center(f.b_board.width, f.t_current.size), 0)
-
+    ansi.clear()
     # k = Field._color_mapping.keys()
     # for i in range(f.b_board.height):
     #     for j in range(f.b_board.width):
     #         f.dim[i][j] = random.choice(k)
 
-    try:
-        f.start()
-        f.run()
-    finally:
-        Screen.close()
-        Screen.clear()
 
 if __name__ == '__main__':
     main()

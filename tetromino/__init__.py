@@ -1,10 +1,9 @@
 import random
 
-from ansi import Screen, Color
+import ansi
+from ui import Color
 
 from math import floor
-
-
 
 class Tetromino(object):
     """
@@ -36,8 +35,8 @@ class Tetromino(object):
     def rand():
         return Tetromino._constructors[random.randint(0,6)]()
 
-    def __init__(self, size=4):
-        self.pos = None
+    def __init__(self, pos=None, size=4):
+        self.pos = pos
         self.size = size
         self.matrix = [ ['.' for x in range(size)] for y in range(size) ]
 
@@ -45,16 +44,17 @@ class Tetromino(object):
         if in_size is not None:
             # calculate center in given size
             padding = Tetromino.center(in_size, self.size)
-            Screen.move(padding, 'C')
-        Screen.raw(self._color())
+            ansi.move(padding, 'C')
+        ansi.raw(self._color())
         for row in self.matrix:
             for col in row:
                 if col == '.':
-                    Screen.move(2, 'C')
+                    ansi.raw('##')
+                    # ansi.move(2, 'C')
                 else:
-                    Screen.raw(Tetromino.BLOCK)
-            Screen.ln(self.size * 2)
-        Screen.raw(Color.RESET)
+                    ansi.raw(Tetromino.BLOCK)
+            ansi.ln(self.size * 2)
+        ansi.raw(Color.RESET)
 
     def rotate_cw(self):
         new_matrix = [ [ self.matrix[self.size - 1 - x][y] for x in range(self.size) ] for y in range(self.size) ]
@@ -69,8 +69,8 @@ class Tetromino(object):
 
 class L_Tetromino(Tetromino):
     color = Color.FG.WHITE
-    def __init__(self):
-        Tetromino.__init__(self, 3)
+    def __init__(self, pos=None):
+        Tetromino.__init__(self, pos, 3)
         self.matrix[0][1] = 'L'
         self.matrix[1][1] = 'L'
         self.matrix[2][1] = 'L'
@@ -82,8 +82,8 @@ class L_Tetromino(Tetromino):
 
 class J_Tetromino(Tetromino):
     color = Color.FG.BLUE
-    def __init__(self):
-        Tetromino.__init__(self, 3)
+    def __init__(self, pos=None):
+        Tetromino.__init__(self, pos, 3)
         self.matrix[0][1] = 'J'
         self.matrix[1][1] = 'J'
         self.matrix[2][1] = 'J'
@@ -94,8 +94,8 @@ class J_Tetromino(Tetromino):
 
 class T_Tetromino(Tetromino):
     color = Color.FG.MAGENTA
-    def __init__(self):
-        Tetromino.__init__(self, 3)
+    def __init__(self, pos=None):
+        Tetromino.__init__(self, pos, 3)
         self.matrix[0][1] = 'T'
         self.matrix[1][0] = 'T'
         self.matrix[1][1] = 'T'
@@ -107,8 +107,8 @@ class T_Tetromino(Tetromino):
 
 class O_Tetromino(Tetromino):
     color = Color.FG.YELLOW
-    def __init__(self):
-        Tetromino.__init__(self, 2)
+    def __init__(self, pos=None):
+        Tetromino.__init__(self, pos, 2)
         self.matrix[0][0] = 'O'
         self.matrix[0][1] = 'O'
         self.matrix[1][0] = 'O'
@@ -126,8 +126,8 @@ class O_Tetromino(Tetromino):
 
 class S_Tetromino(Tetromino):
     color = Color.FG.GREEN
-    def __init__(self):
-        Tetromino.__init__(self, 3)
+    def __init__(self, pos=None):
+        Tetromino.__init__(self, pos, 3)
         self.matrix[0][1] = 'S'
         self.matrix[0][2] = 'S'
         self.matrix[1][0] = 'S'
@@ -139,8 +139,8 @@ class S_Tetromino(Tetromino):
 
 class Z_Tetromino(Tetromino):
     color = Color.FG.RED
-    def __init__(self):
-        Tetromino.__init__(self, 3)
+    def __init__(self, pos=None):
+        Tetromino.__init__(self, pos, 3)
         self.matrix[0][0] = 'Z'
         self.matrix[0][1] = 'Z'
         self.matrix[1][1] = 'Z'
@@ -152,8 +152,8 @@ class Z_Tetromino(Tetromino):
 
 class l_Tetromino(Tetromino):
     color = Color.FG.CYAN
-    def __init__(self):
-        Tetromino.__init__(self)
+    def __init__(self, pos=None):
+        Tetromino.__init__(self, pos)
         self.matrix[0][1] = 'l'
         self.matrix[1][1] = 'l'
         self.matrix[2][1] = 'l'
