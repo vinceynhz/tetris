@@ -62,18 +62,16 @@ class Tetromino(object):
         # new_matrix = [ [ self.matrix[self.size - 1 - x][y] for x in range(self.size) ] for y in range(self.size) ]
         # non square matrix rotation
         self.matrix = [ list(t[::-1]) for t in zip(*self.matrix) ]
-        self.width = self.width + self.height
-        self.height = self.width - self.height
-        self.width = self.width - self.height
+        # switch widht and height using tuples
+        self.width, self.height = (self.height, self.width)
 
     def rotate_ccw(self):
         # square matrix rotation
         # new_matrix = [ [ self.matrix[x][self.size - y - 1] for x in range(self.size) ] for y in range(self.size) ]
         # non square matrix rotation
         self.matrix = [ list(t) for t in zip(*self.matrix)][::-1]
-        self.width = self.width + self.height
-        self.height = self.width - self.height
-        self.width = self.width - self.height
+        # switch width and height using tuples
+        self.width, self.height = (self.height, self.width)
 
     def _color(self):
         return Tetromino.color
