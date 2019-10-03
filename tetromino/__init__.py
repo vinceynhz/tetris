@@ -35,15 +35,16 @@ class Tetromino(object):
     def rand():
         return Tetromino._constructors[random.randint(0,6)]()
 
-    def __init__(self, pos=None, size=4):
+    def __init__(self, pos=None, width=4, height = None):
         self.pos = pos
-        self.size = size
-        self.matrix = [ ['.' for x in range(size)] for y in range(size) ]
+        self.width = width
+        self.height = width if height is None else height
+        self.matrix = [ ['.' for col in range(self.width)] for row in range(self.height) ]
 
     def _print(self, in_size = None):
         if in_size is not None:
             # calculate center in given size
-            padding = Tetromino.center(in_size, self.size)
+            padding = Tetromino.center(in_size, self.width)
             ansi.move(padding, 'C')
         ansi.raw(self._color())
         for row in self.matrix:
@@ -53,16 +54,26 @@ class Tetromino(object):
                     # ansi.move(2, 'C')
                 else:
                     ansi.raw(Tetromino.BLOCK)
-            ansi.ln(self.size * 2)
+            ansi.ln(self.width * 2)
         ansi.raw(Color.RESET)
 
     def rotate_cw(self):
-        new_matrix = [ [ self.matrix[self.size - 1 - x][y] for x in range(self.size) ] for y in range(self.size) ]
-        self.matrix = new_matrix
+        # square matrix rotation
+        # new_matrix = [ [ self.matrix[self.size - 1 - x][y] for x in range(self.size) ] for y in range(self.size) ]
+        # non square matrix rotation
+        self.matrix = [ list(t[::-1]) for t in zip(*self.matrix) ]
+        self.width = self.width + self.height
+        self.height = self.width - self.height
+        self.width = self.width - self.height
 
     def rotate_ccw(self):
-        new_matrix = [ [ self.matrix[x][self.size - y - 1] for x in range(self.size) ] for y in range(self.size) ]
-        self.matrix = new_matrix
+        # square matrix rotation
+        # new_matrix = [ [ self.matrix[x][self.size - y - 1] for x in range(self.size) ] for y in range(self.size) ]
+        # non square matrix rotation
+        self.matrix = [ list(t) for t in zip(*self.matrix)][::-1]
+        self.width = self.width + self.height
+        self.height = self.width - self.height
+        self.width = self.width - self.height
 
     def _color(self):
         return Tetromino.color
@@ -70,11 +81,11 @@ class Tetromino(object):
 class L_Tetromino(Tetromino):
     color = Color.FG.WHITE
     def __init__(self, pos=None):
-        Tetromino.__init__(self, pos, 3)
-        self.matrix[0][1] = 'L'
-        self.matrix[1][1] = 'L'
+        Tetromino.__init__(self, pos, 2, 3)
+        self.matrix[0][0] = 'L'
+        self.matrix[1][0] = 'L'
+        self.matrix[2][0] = 'L'
         self.matrix[2][1] = 'L'
-        self.matrix[2][2] = 'L'
 
     def _color(self):
         return L_Tetromino.color
@@ -83,7 +94,7 @@ class L_Tetromino(Tetromino):
 class J_Tetromino(Tetromino):
     color = Color.FG.BLUE
     def __init__(self, pos=None):
-        Tetromino.__init__(self, pos, 3)
+        Tetromino.__init__(self, pos, 2, 3)
         self.matrix[0][1] = 'J'
         self.matrix[1][1] = 'J'
         self.matrix[2][1] = 'J'
@@ -95,7 +106,7 @@ class J_Tetromino(Tetromino):
 class T_Tetromino(Tetromino):
     color = Color.FG.MAGENTA
     def __init__(self, pos=None):
-        Tetromino.__init__(self, pos, 3)
+        Tetromino.__init__(self, pos, 3, 2)
         self.matrix[0][1] = 'T'
         self.matrix[1][0] = 'T'
         self.matrix[1][1] = 'T'
@@ -127,7 +138,7 @@ class O_Tetromino(Tetromino):
 class S_Tetromino(Tetromino):
     color = Color.FG.GREEN
     def __init__(self, pos=None):
-        Tetromino.__init__(self, pos, 3)
+        Tetromino.__init__(self, pos, 3, 2)
         self.matrix[0][1] = 'S'
         self.matrix[0][2] = 'S'
         self.matrix[1][0] = 'S'
@@ -140,7 +151,7 @@ class S_Tetromino(Tetromino):
 class Z_Tetromino(Tetromino):
     color = Color.FG.RED
     def __init__(self, pos=None):
-        Tetromino.__init__(self, pos, 3)
+        Tetromino.__init__(self, pos, 3, 2)
         self.matrix[0][0] = 'Z'
         self.matrix[0][1] = 'Z'
         self.matrix[1][1] = 'Z'
@@ -153,11 +164,11 @@ class Z_Tetromino(Tetromino):
 class l_Tetromino(Tetromino):
     color = Color.FG.CYAN
     def __init__(self, pos=None):
-        Tetromino.__init__(self, pos)
-        self.matrix[0][1] = 'l'
-        self.matrix[1][1] = 'l'
-        self.matrix[2][1] = 'l'
-        self.matrix[3][1] = 'l'
+        Tetromino.__init__(self, pos, 1, 4)
+        self.matrix[0][0] = 'l'
+        self.matrix[1][0] = 'l'
+        self.matrix[2][0] = 'l'
+        self.matrix[3][0] = 'l'
 
     def _color(self):
         return 

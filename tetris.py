@@ -59,7 +59,7 @@ class Field(object):
     def new_current(self):
         self.t_current = Tetromino.rand()
         self.t_current.pos = Coord(
-            Tetromino.center(self.b_board.width, self.t_current.size),  # x
+            Tetromino.center(self.b_board.width, self.t_current.width),  # x
             0,                                                          # y
             self.b_board.width - 1 ,                                    # max_x
             self.b_board.height - 1                                     # max_y
