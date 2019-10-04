@@ -42,9 +42,10 @@ class Field(object):
     _move_mapping = {
         'CCW':       lambda f: f.t_current.rotate_ccw(),
         'CW':        lambda f: f.t_current.rotate_cw(), 
-        'HARD_DROP': lambda f: f.new_current(),
-        'LEFT':      lambda f: f.left_current(),
-        'RIGHT':     lambda f: f.right_current()
+        'HARD_DROP': lambda f: f.next(),
+        'LEFT':      lambda f: f.t_current.left(),
+        'RIGHT':     lambda f: f.t_current.right(),
+        'DOWN':     lambda f: f.t_current.down(),
     }
 
     def __init__(self):
@@ -56,20 +57,19 @@ class Field(object):
         self.t_current = None
         self.t_next = None
 
-    def new_current(self):
-        self.t_current = Tetromino.rand()
+        Tetromino.set_max_pos(Coord(self.b_board.width - 1, self.b_board.height - 1))
+
+    def next(self):
+        self.b_next._print()
+        if(self.t_next is None):
+            self.t_next = Tetromino.rand()
+    
+        self.t_current = self.t_next
         self.t_current.pos = Coord(
             Tetromino.center(self.b_board.width, self.t_current.width),  # x
-            0,                                                          # y
-            self.b_board.width - 1 ,                                    # max_x
-            self.b_board.height - 1                                     # max_y
+            0                                                            # y
         )
-
-    def left_current(self):
-        self.t_current.pos -= (1,0)
-
-    def right_current(self):
-        self.t_current.pos += (1,0)
+        self.t_next = Tetromino.rand()
 
     def draw_blocks(self):
         # Draw the main board and whatever elements are there
@@ -118,6 +118,7 @@ class Field(object):
         # draw the main board
         ansi.clear()
 
+
         self.b_board._print()
         self.b_next._print()
 
@@ -140,9 +141,8 @@ class Field(object):
 def main():
     with ansi.Terminal():
         f = Field()
-        f.t_next = Tetromino.rand()
-        f.new_current()
 
+        f.next()
         f.start()
         f.run()
 

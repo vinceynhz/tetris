@@ -15,6 +15,8 @@ class Tetromino(object):
     """
     BLOCK = u"\u2588\u2588"
 
+    MAX_POS = None
+
     color = Color.RESET
 
     _constructors = [
@@ -35,8 +37,12 @@ class Tetromino(object):
     def rand():
         return Tetromino._constructors[random.randint(0,6)]()
 
-    def __init__(self, pos=None, width=4, height = None):
-        self.pos = pos
+    @staticmethod
+    def set_max_pos(max_pos):
+        Tetromino.MAX_POS = max_pos
+
+    def __init__(self, pos=None, width=4, height=None):
+        self.pos = pos # Coord
         self.width = width
         self.height = width if height is None else height
         self.matrix = [ ['.' for col in range(self.width)] for row in range(self.height) ]
@@ -73,6 +79,15 @@ class Tetromino(object):
         # switch width and height using tuples
         self.width, self.height = (self.height, self.width)
 
+    def left(self):
+        if self.pos.x > 0: self.pos.x -= 1
+
+    def right(self):
+        if Tetromino.MAX_POS is not None and (self.pos.x + self.width) <= Tetromino.MAX_POS.x: self.pos.x += 1
+
+    def down(self):
+        if Tetromino.MAX_POS is not None and (self.pos.y + self.height) <= Tetromino.MAX_POS.y: self.pos.y += 1
+
     def _color(self):
         return Tetromino.color
 
@@ -87,7 +102,6 @@ class L_Tetromino(Tetromino):
 
     def _color(self):
         return L_Tetromino.color
-
 
 class J_Tetromino(Tetromino):
     color = Color.FG.BLUE
@@ -113,7 +127,6 @@ class T_Tetromino(Tetromino):
     def _color(self):
         return T_Tetromino.color
 
-
 class O_Tetromino(Tetromino):
     color = Color.FG.YELLOW
     def __init__(self, pos=None):
@@ -132,7 +145,6 @@ class O_Tetromino(Tetromino):
     def rotate_ccw(self):
         pass
 
-
 class S_Tetromino(Tetromino):
     color = Color.FG.GREEN
     def __init__(self, pos=None):
@@ -145,7 +157,6 @@ class S_Tetromino(Tetromino):
     def _color(self):
         return S_Tetromino.color
 
-
 class Z_Tetromino(Tetromino):
     color = Color.FG.RED
     def __init__(self, pos=None):
@@ -157,7 +168,6 @@ class Z_Tetromino(Tetromino):
 
     def _color(self):
         return Z_Tetromino.color
-
 
 class l_Tetromino(Tetromino):
     color = Color.FG.CYAN

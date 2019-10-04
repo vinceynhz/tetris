@@ -4,25 +4,16 @@ class Coord(object):
     x = None
     y = None
 
-    def __init__(self, x, y, max_x = None, max_y = None, min_x = 0, min_y = 0):
+    def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.max_x = max_x
-        self.max_y = max_y
-        self.min_x = min_x
-        self.min_y = min_y
 
     def __call__(self):
         return (self.x, self.y)
 
     def __add__(self, other):
         ax, ay = self._other(other)
-        
-        # check boundaries
-        nx = min(self.max_x, self.x + ax) if self.max_x is not None else self.x + ax
-        ny = min(self.max_y, self.y + ay) if self.max_y is not None else self.y + ay
-
-        return (nx, ny)
+        return (self.x + ax, self.y + ay)
 
     def __iadd__(self, other):
         self.x, self.y = self.__add__(other)
@@ -30,12 +21,8 @@ class Coord(object):
 
     def __sub__(self, other):
         ax, ay = self._other(other)
-        # check boundaries
-        nx = max(self.min_x, self.x - ax) if self.min_x is not None else self.x - ax
-        ny = max(self.min_y, self.y - ay) if self.min_y is not None else self.y - ay
-
-        return (nx, ny)
-
+        return (self.x + ax, self.y + ay)
+        
     def __isub__(self, other):
         self.x, self.y = self.__sub__(other)
         return self
