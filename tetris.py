@@ -60,11 +60,12 @@ class Field(object):
         Tetromino.set_max_pos(Coord(self.b_board.width - 1, self.b_board.height - 1))
 
     def next(self):
-        self.b_next._print()
+        # if we don't have one, then we create one
         if(self.t_next is None):
             self.t_next = Tetromino.rand()
-    
+        # assign whatever was on next to the current
         self.t_current = self.t_next
+        # set it at the center of the top
         self.t_current.pos = Coord(
             Tetromino.center(self.b_board.width, self.t_current.width),  # x
             0                                                            # y
@@ -90,6 +91,9 @@ class Field(object):
             )
             ansi.position(t_current_pos)
             self.t_current._print()
+
+        # Redraw the board for the next tetromino
+        self.b_next._print()
 
         # Draw the next tetromino (aka spare)
         if self.t_next is not None:
